@@ -15,4 +15,11 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('top');
+})->middleware('auth');
+
+Route::get('/login', function () {
+    return view('home');
 });
+
+Auth::routes();
+

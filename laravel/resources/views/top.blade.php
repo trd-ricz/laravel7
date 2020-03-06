@@ -1,10 +1,6 @@
-@extends('master')
+@extends('layouts.app')
 
-@section('vuejs')
-    <script src=" {{ mix('js/app.js') }} "></script>
-@stop
-
-@section('contents')
+@section('content')
 	@php
 
 	$value = [
@@ -40,6 +36,6 @@
 		<home></home>
 		<posts :default-posts="{{$default_post}}"></posts>
 	</div>
-	
+
 
 @stop
