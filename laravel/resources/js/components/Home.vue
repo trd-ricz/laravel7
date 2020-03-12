@@ -2,6 +2,8 @@
   <div style="height: 100%;">
    <h3>TOP SECTION</h3>
    <p>There are <i>{{count}}</i> Post.</p>
+   <input type="text" v-model="$store.state.posts.apiToken">
+   <button @click="generateApiToken"> Generate Token</button>
   </div>
 </template>
 <script>
@@ -32,7 +34,9 @@ export default {
   beforeDestroy() {},
 
   methods: {
-
+   ...mapActions('posts/',[
+	    'generateApiToken',
+	 ]),
     
     
   }

@@ -4,7 +4,8 @@ const Posts = {
 
   state: {
     count: 0,
-    post : []
+    post : [],
+    apiToken : null,
   },
   mutations: {
     increment (state,pl) {
@@ -40,6 +41,9 @@ const Posts = {
         }
       })
     },
+    setApiToken(state,pl){
+     state.apiToken = pl
+    },
 
   },
   actions : {
@@ -60,6 +64,21 @@ const Posts = {
     },
     updatePost(context, pl){
       context.commit('updatePost',pl)
+    },
+    generateApiToken(context, pl){
+      axios.get('/api/generate_api_token' , { headers: { Authorization: 'Bearer '+context.rootState.auth.auth } })
+      .then( (response) => {
+        context.commit('setApiToken',response.data.value)
+      })
+    },
+    getPostApi(context,pl){
+      axios.get('/api/get_api' , { headers: { Authorization: 'Bearer '+context.state.apiToken } })
+      .then( (response) => {
+        if(!response.data.status){alert(response.data.message); return;}
+        console.log(response.data)
+        context.commit('defaultPost',response.data.value)
+        context.commit('increment', response.data.value.length)
+      })
     },
 
   },

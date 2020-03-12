@@ -6,7 +6,8 @@
       <p> Content : {{post.content}} </p>
       <p> Author : {{post.author}} </p>
       <p> Date : {{post.date}} </p>
-      <button @click="deletePost(post.row_id)">Delete</button>
+      <p> Level : {{post.post_level}} </p>
+      <button @click="delPost(post.row_id)">Delete</button>
       <button @click="editPost(post.row_id)">Edit</button>
       <hr>
     </li>
@@ -15,6 +16,7 @@
    <textarea v-model="textValue"></textarea>
    <button v-if="isEdit" @click="edit">Edit</button>
    <button v-else @click="submitPost">Submit</button>
+   <button @click="getPostApi">Get Post Api</button>
   </div>
 </template>
 <script>
@@ -47,8 +49,8 @@ export default {
     ])
   },
   mounted() {
-    this.defaultPost(this.defaultPosts)
-    this.increment(this.defaultPosts.length)
+    /* this.defaultPost(this.defaultPosts)
+    this.increment(this.defaultPosts.length) */
   },
 
   beforeDestroy() {},
@@ -60,7 +62,8 @@ export default {
       'deletePost',
       'decrement',
       'updatePost',
-      'defaultPost'
+      'defaultPost',
+      'getPostApi',
     ]),
 
     submitPost(){
@@ -70,12 +73,13 @@ export default {
         row_id : this.count + 1,
         content : value,
         author : 'Ricsheil',
-        date : 'today'
+        date : 'today',
+        post_level : null
       })
       this.increment()
       this.textValue = ""
     },
-    deletePost (id) {
+    delPost (id) {
       this.deletePost(id)
       this.decrement()
     },
