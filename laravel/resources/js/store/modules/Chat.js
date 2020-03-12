@@ -12,12 +12,13 @@ const Chat = {
   mutations: {
    SUBMIT_MESSAGE(state,pl){
     console.log('muta',pl)
-    state.chatData.push(
-      {
-       message : pl.message,
-       author : (pl.author) ? pl.author : "No name"
-      }
-    )
+    state.chatData = pl
+//    state.chatData.push(
+//      {
+//       message : pl.message,
+//       author : (pl.author) ? pl.author : "No name"
+//      }
+//    )
     state.message = ""
    },
    SAVE_AUTHOR(state,pl){
@@ -30,7 +31,7 @@ const Chat = {
    
    sendMessage(context, pl){
     
-    let url = 'api/chat'
+    let url = 'api/chat-broadcaster'
      axios.defaults.headers.common = { 'Authorization': 'Bearer ' +context.rootState.posts.apiToken }
      console.log(context)
      axios.post(

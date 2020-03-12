@@ -6,6 +6,8 @@ use App\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 use App\Events\ChatEvent;
+use App\Chat;
+use Illuminate\Support\Facades\Redis;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,12 +21,27 @@ use App\Events\ChatEvent;
 */
 
 
-Route::post('/chat', function (Request $request) {
+Route::post('/chat-broadcaster', function (Request $request) {
     if ($request->user()->tokenCan('access:api')) {
-        broadcast(new ChatEvent([
+        $chatData = json_decode(Redis::get('chat-data'));
+        $send_data = [
             "message" => $request->message,
             "author" => $request->author
-        ]));
+        ];
+        if(isset($chatData) && count($chatData)){
+            $chatData[] = $send_data;
+        }else{
+            $chatData = [$send_data];
+        }
+        Redis::set('chat-data', json_encode($chatData));
+        if(count($chatData) >= 10){
+            $Model =  new Chat();
+            $Model->data = json_encode($chatData);
+            $Model->save();
+            //resvert to empty again
+            Redis::set('chat-data', json_encode([]));
+        }
+        broadcast(new ChatEvent($chatData));
     }
 })->middleware('auth:airlock');
 
