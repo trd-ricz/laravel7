@@ -2057,6 +2057,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   components: {},
@@ -2077,7 +2078,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       _this.receiveMessage(e.chat);
     });
   },
-  methods: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapActions"])('chat/', ['sendMessage', 'saveAuthor', 'receiveMessage']))
+  methods: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapActions"])('chat/', ['sendMessage', 'saveAuthor', 'receiveMessage', 'showMore']))
 });
 
 /***/ }),
@@ -49922,6 +49923,8 @@ var render = function() {
       "ul",
       { staticStyle: { width: "40%", "margin-top": "20px" } },
       [
+        _c("button", { on: { click: _vm.showMore } }, [_vm._v("Show More")]),
+        _vm._v(" "),
         _vm._l(_vm.chatData, function(chatDatum) {
           return _c(
             "li",
@@ -63561,7 +63564,9 @@ window.io = __webpack_require__(/*! socket.io-client */ "./node_modules/socket.i
 if (typeof io !== 'undefined') {
   window.Echo = new laravel_echo__WEBPACK_IMPORTED_MODULE_0__["default"]({
     broadcaster: 'socket.io',
-    host: window.location.hostname + ':40911'
+    host: window.location.hostname + ':40911',
+    pingTimeout: 120000,
+    pingInterval: 25000
   });
 }
 
@@ -63954,29 +63959,42 @@ var Chat = {
     message: "",
     author: "",
     chatData: [],
-    frontUrl: 'http://laravel7.localhost/'
+    frontUrl: 'http://laravel7.localhost/',
+    skip: 1
   },
   mutations: {
     SUBMIT_MESSAGE: function SUBMIT_MESSAGE(state, pl) {
       console.log('muta', pl);
-      state.chatData.push({
-        message: pl.message,
-        author: pl.author ? pl.author : "No name"
-      });
+      state.chatData = pl; //    state.chatData.push(
+      //      {
+      //       message : pl.message,
+      //       author : (pl.author) ? pl.author : "No name"
+      //      }
+      //    )
+
       state.message = "";
     },
     SAVE_AUTHOR: function SAVE_AUTHOR(state, pl) {
       console.log('author', pl);
       state.author = pl;
+    },
+    INC_SKIP: function INC_SKIP(state, pl) {
+      state.skip++;
+    },
+    CONCAT_MESSAGES: function CONCAT_MESSAGES(state, pl) {
+      state.chatData = JSON.parse(pl).concat(state.chatData);
+      console.log(state.chatData);
+    },
+    DECREMENT_SKIP: function DECREMENT_SKIP(state, pl) {
+      state.skip--;
     }
   },
   actions: {
     sendMessage: function sendMessage(context, pl) {
-      var url = 'api/chat';
+      var url = 'api/chat-broadcaster';
       axios.defaults.headers.common = {
         'Authorization': 'Bearer ' + context.rootState.posts.apiToken
       };
-      console.log(context);
       axios.post("".concat(context.state.frontUrl).concat(url), {
         message: context.state.message,
         author: context.state.author
@@ -63988,8 +64006,21 @@ var Chat = {
       context.commit("SUBMIT_MESSAGE", pl);
     },
     saveAuthor: function saveAuthor(context, pl) {
-      console.log("SAVE_AUTHOR", context.state.author);
       context.commit("SAVE_AUTHOR", context.state.author);
+    },
+    showMore: function showMore(context, pl) {
+      var url = 'api/chat-show-more';
+      axios.defaults.headers.common = {
+        'Authorization': 'Bearer ' + context.rootState.posts.apiToken
+      };
+      axios.post("".concat(context.state.frontUrl).concat(url), {
+        skip: context.state.skip
+      }).then(function (response) {
+        context.commit("CONCAT_MESSAGES", response.data.value);
+        context.commit("INC_SKIP");
+      })["catch"](function (e) {
+        context.commit("DECREMENT_SKIP");
+      });
     }
   },
   getters: {}

@@ -16,8 +16,7 @@ class Chat extends Migration
         //
         Schema::create('chats', function (Blueprint $table) {
             $table->id();
-            $table->string('room_id');
-            $table->string('data');
+            $table->longText('data');
             $table->timestamps();
         });
     }

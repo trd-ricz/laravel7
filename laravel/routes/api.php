@@ -20,6 +20,27 @@ use Illuminate\Support\Facades\Redis;
 |
 */
 
+Route::get('/chat-tester', function (Request $request) {
+    $Model =  new Chat();
+    $chat = $Model->orderBy("id",'DESC')->skip(3)->take(1)->get()->first();
+    dd($chat->data);
+});
+Route::get('/chat-redis-clear', function (Request $request) {
+    Redis::set('chat-data', json_encode([]));
+    dd("OK");
+});
+
+Route::post('/chat-show-more', function (Request $request) {
+    $skip = $request->input("skip");
+    $Model =  new Chat();
+    $chat = $Model->orderBy("id",'DESC')->skip($skip)->take(1)->get()->first();
+    return
+    [
+        "value" => $chat->data,
+        "message" => "Success",
+        "status" => true
+    ];
+});
 
 Route::post('/chat-broadcaster', function (Request $request) {
     if ($request->user()->tokenCan('access:api')) {
@@ -40,6 +61,14 @@ Route::post('/chat-broadcaster', function (Request $request) {
             $Model->save();
             //resvert to empty again
             Redis::set('chat-data', json_encode([]));
+            $chatData = [];
+        }
+        // Get the last row
+        $Model =  new Chat();
+        $chat = $Model->orderBy("id",'DESC')->get()->first();
+        if($chat){
+            $lastRow = json_decode($chat->data);
+            $chatData = array_merge($lastRow,$chatData);
         }
         broadcast(new ChatEvent($chatData));
     }

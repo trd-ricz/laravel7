@@ -38,6 +38,8 @@ if (typeof io !== 'undefined') {
   window.Echo = new Echo({
     broadcaster: 'socket.io',
     host: window.location.hostname + ':40911',
+    pingTimeout : 120000,
+    pingInterval : 25000
   });
 
 }

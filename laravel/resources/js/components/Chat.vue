@@ -3,6 +3,7 @@
    <h3>Chat</h3>
    <input placeholder="Your name" type="text" v-model="$store.state.chat.author" @change="saveAuthor">
    <ul style="width:40%;margin-top: 20px;" >
+     <button @click="showMore">Show More</button>
      <li v-for="chatDatum in chatData" :style="$store.state.chat.author == chatDatum.author ?
       'text-align:right' : 'text-align:left'">
        <div class="wrapper" :style="$store.state.chat.author == chatDatum.author ?
@@ -51,6 +52,7 @@ export default {
     'sendMessage',
     'saveAuthor',
     'receiveMessage',
+    'showMore'
    ]),
   }
 };

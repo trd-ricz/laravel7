@@ -7,6 +7,7 @@ const Chat = {
    author : "",
    chatData : [],
    frontUrl : 'http://laravel7.localhost/',
+   skip : 1
     
   },
   mutations: {
@@ -24,7 +25,18 @@ const Chat = {
    SAVE_AUTHOR(state,pl){
     console.log('author', pl)
     state.author = pl
-   }
+   },
+   INC_SKIP(state,pl){
+     state.skip++
+   },
+   CONCAT_MESSAGES(state,pl){
+     
+     state.chatData = JSON.parse(pl).concat(state.chatData)
+     console.log(state.chatData)
+   },
+   DECREMENT_SKIP(state, pl){
+     state.skip--
+   },
 
   },
   actions : {
@@ -33,7 +45,6 @@ const Chat = {
     
     let url = 'api/chat-broadcaster'
      axios.defaults.headers.common = { 'Authorization': 'Bearer ' +context.rootState.posts.apiToken }
-     console.log(context)
      axios.post(
        `${context.state.frontUrl}${url}`, {message : context.state.message, author : context.state.author}
      ).then( (response) => {
@@ -44,10 +55,20 @@ const Chat = {
      context.commit("SUBMIT_MESSAGE",pl)
    },
    saveAuthor(context, pl){
-    console.log("SAVE_AUTHOR",context.state.author)
     context.commit("SAVE_AUTHOR",context.state.author)
    },
-    
+   showMore(context,pl){
+    let url = 'api/chat-show-more'
+    axios.defaults.headers.common = { 'Authorization': 'Bearer ' +context.rootState.posts.apiToken }
+    axios.post(
+      `${context.state.frontUrl}${url}`, {skip : context.state.skip}
+    ).then( (response) => {
+      context.commit("CONCAT_MESSAGES",response.data.value)
+      context.commit("INC_SKIP")
+    }).catch( e => {
+      context.commit("DECREMENT_SKIP")
+    })
+   },
   },
   getters: {
    
