@@ -9,7 +9,7 @@
 ### settings
 ###---------------------------------------###
 
-LARADOCK_DIR=ogic-mes-admin_ld/
+LARADOCK_DIR=laravel7_ld/
 LARAVEL_DIR=laravel/
 
 ###---------------------------------------###
@@ -62,15 +62,6 @@ installNpm () {
   npm run ${ENV}
 }
 
-##
-# storybook
-#
-installStoryBook () {
-  cd ${abspath}
-  cd ${LARAVEL_DIR}
-  npm run build-storybook
-  mv storybook-static/ public/
-}
 
 ##
 # replace docker env
