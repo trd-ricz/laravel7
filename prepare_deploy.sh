@@ -43,13 +43,13 @@ upDocker () {
 #
 installComposer () {
   cd ${abspath}
-  cd ${LARADOCK_DIR}
-  docker-compose exec -T workspace composer install
-  docker-compose exec -T workspace php artisan passport:keys
-  docker-compose exec -T workspace php artisan storage:link
-  docker-compose exec -T workspace php artisan cache:clear
-  docker-compose exec -T workspace php artisan config:clear
-  docker-compose exec -T workspace php artisan config:cache
+  cd ${LARAVEL_DIR}
+  composer install
+  php artisan passport:keys
+  php artisan storage:link
+  php artisan cache:clear
+  php artisan config:clear
+  php artisan config:cache
 }
 
 ##
@@ -120,13 +120,13 @@ abspath=$(cd $(dirname $0); pwd)
 checkRequireParams $1
 
 # Replace docker env
-replaceDockerEnv
+#replaceDockerEnv
 
 ## Replace laravel env
-replaceLaravelEnv
+#replaceLaravelEnv
 
 # Up docker
-upDocker
+#upDocker
 
 # Install composer
 installComposer
