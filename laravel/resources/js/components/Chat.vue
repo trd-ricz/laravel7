@@ -15,7 +15,8 @@
      </li>
       <hr>
     </ul>
-   <textarea v-model="$store.state.chat.message"></textarea>
+   <textarea v-model="$store.state.chat.message" @keydown="isTyping(true)"></textarea>
+   <!-- <p v-show="type">{{whisperBy}} Typing...</p> -->
    <button @click="sendMessage"> Send </button>
   </div>
 </template>
@@ -23,7 +24,8 @@
 import {mapActions} from 'vuex'
 export default {
   components: {
-    
+   type : false,
+   whisperBy : "",
   },
   data: function() {
     return {
@@ -42,17 +44,17 @@ export default {
   },
   mounted() {
    
-   window.Echo.channel("laravel_database_chat").listen("ChatEvent", e => {
-      this.receiveMessage(e.chat)
-   });
-    
+   window.Echo.channel("laravel_database_chat_message")
+   .listen("ChatEvent", e => {this.receiveMessage(e.chat)})
+     
   },
   methods: {
    ...mapActions('chat/',[
     'sendMessage',
     'saveAuthor',
     'receiveMessage',
-    'showMore'
+    'showMore',
+    'isTyping'
    ]),
   }
 };

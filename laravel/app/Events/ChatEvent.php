@@ -9,6 +9,7 @@ use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Notifications\Messages\BroadcastMessage;
 
 class ChatEvent implements ShouldBroadcast
 {
@@ -34,8 +35,13 @@ class ChatEvent implements ShouldBroadcast
      *
      * @return \Illuminate\Broadcasting\Channel|array
      */
+
+
+
     public function broadcastOn()
     {
-        return new Channel('chat');
+        $channel = isset($this->chat["channel"]) ? "whisper" : "message";
+        return new Channel('chat'."_".$channel);
     }
+
 }

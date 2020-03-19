@@ -7,7 +7,8 @@ const Chat = {
    author : "",
    chatData : [],
    frontUrl : 'http://laravel7.localhost/',
-   skip : 1
+   skip : 1,
+   whisper : false
     
   },
   mutations: {
@@ -36,6 +37,9 @@ const Chat = {
    },
    DECREMENT_SKIP(state, pl){
      state.skip--
+   },
+   WHISPER(state, pl){
+    state.whisper = pl
    },
 
   },
@@ -69,6 +73,26 @@ const Chat = {
       context.commit("DECREMENT_SKIP")
     })
    },
+   isTyping(context,pl) {
+    console.log(pl)
+    if(!pl){
+     context.commit("WHISPER",false)
+     return
+    }
+    
+    setTimeout(function() {
+     let url = 'api/chat-whisper'
+     axios.defaults.headers.common = { 'Authorization': 'Bearer ' +context.rootState.posts.apiToken }
+     axios.post(
+       `${context.state.frontUrl}${url}`, {user : context.state.author}
+     ).then( (response) => {
+       
+       context.commit("WHISPER",true)
+     }).catch( e => {
+     })
+     
+    }, 300);
+  },
   },
   getters: {
    

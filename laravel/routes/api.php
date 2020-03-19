@@ -8,6 +8,7 @@ use Illuminate\Validation\ValidationException;
 use App\Events\ChatEvent;
 use App\Chat;
 use Illuminate\Support\Facades\Redis;
+use Illuminate\Support\Facades\Http;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,6 +20,11 @@ use Illuminate\Support\Facades\Redis;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
+
+Route::get('/http-client-tester', function (Request $request) {
+    $response = Http::get('https://jsonplaceholder.typicode.com/todos/1');
+    dd($response);
+});
 
 Route::get('/chat-tester', function (Request $request) {
     $Model =  new Chat();
@@ -42,12 +48,20 @@ Route::post('/chat-show-more', function (Request $request) {
     ];
 });
 
+Route::post('/chat-whisper', function (Request $request) {
+    $chatData = [
+        "channel" => "whisper",
+        "whisper_by" => $request->user,
+    ];
+    broadcast(new ChatEvent($chatData));
+});
+
 Route::post('/chat-broadcaster', function (Request $request) {
     if ($request->user()->tokenCan('access:api')) {
         $chatData = json_decode(Redis::get('chat-data'));
         $send_data = [
             "message" => $request->message,
-            "author" => $request->author
+            "author" => $request->author,
         ];
         if(isset($chatData) && count($chatData)){
             $chatData[] = $send_data;

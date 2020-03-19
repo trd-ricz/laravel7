@@ -1,0 +1,20 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - development
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - name: ssh key generate
+      run: echo "$SSH_DEVELOPMENT_KEY" > key && chmod 600 key
+      env:
+        SSH_DEVELOPMENT_KEY: ${{ secrets.SSH_DEVELOPMENT_KEY }}
+    - name: Making tar for Deploy
+      run: bash ./prepare_deploy.sh development
+    - name: Deploying
+      run: bash ./exec_deploy_development.sh key
