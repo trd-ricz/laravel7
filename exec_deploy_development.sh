@@ -146,3 +146,13 @@ cmds+=("php artisan config:cache;")
 
 #exec
 ssh ${SSH_KEY} ${SSH_USER} -o "StrictHostKeyChecking no" ${cmds[*]}
+
+
+## laravel echo start
+cmds=()
+cmds+=("echo laravel echo start;")
+cmds+=("cd ${LINK_PATH}${ROOT_DIR};")
+cmds+=("laravel-echo-server start;")
+
+#exec
+ssh ${SSH_KEY} ${SSH_USER} -o "StrictHostKeyChecking no" ${cmds[*]}
