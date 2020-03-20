@@ -59,6 +59,7 @@ installNpm () {
 replaceLaravelEnv () {
   cd ${abspath}
   cd ${LARAVEL_DIR}
+  echo "replace laravel environment"
   cp .env .env.tmp
   cp .env.${ENV} .env
 }
@@ -66,9 +67,10 @@ replaceLaravelEnv () {
 ##
 # replace laravel echo json env
 #
-replaceLaravelEnv () {
+replaceWebsocketEnv () {
   cd ${abspath}
   cd ${LARAVEL_DIR}
+  echo "replace websocket environment"
   cp laravel-echo-server.json laravel-echo-server.json.tmp
   cp laravel-echo-server.json.${ENV} laravel-echo-server.json
 }
@@ -104,6 +106,9 @@ checkRequireParams $1
 
 ## Replace laravel env
 replaceLaravelEnv
+
+## Replace websocket env
+replaceWebsocketEnv
 
 # Install composer
 installComposer
