@@ -123,7 +123,7 @@ checkRequireParams $1
 #replaceDockerEnv
 
 ## Replace laravel env
-#replaceLaravelEnv
+replaceLaravelEnv
 
 # Up docker
 #upDocker
