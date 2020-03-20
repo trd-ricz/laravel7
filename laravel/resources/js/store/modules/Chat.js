@@ -6,21 +6,14 @@ const Chat = {
    message : "",
    author : "",
    chatData : [],
-   frontUrl : 'http://139.180.135.129/',
+   frontUrl : "",
    skip : 1,
    whisper : false
     
   },
   mutations: {
    SUBMIT_MESSAGE(state,pl){
-    console.log('muta',pl)
     state.chatData = pl
-//    state.chatData.push(
-//      {
-//       message : pl.message,
-//       author : (pl.author) ? pl.author : "No name"
-//      }
-//    )
     state.message = ""
    },
    SAVE_AUTHOR(state,pl){
@@ -40,6 +33,9 @@ const Chat = {
    },
    WHISPER(state, pl){
     state.whisper = pl
+   },
+   SET_FRONT_URL(state, pl){
+    state.frontUrl = pl
    },
 
   },
@@ -73,26 +69,9 @@ const Chat = {
       context.commit("DECREMENT_SKIP")
     })
    },
-   isTyping(context,pl) {
-    console.log(pl)
-    if(!pl){
-     context.commit("WHISPER",false)
-     return
-    }
-    
-    setTimeout(function() {
-     let url = 'api/chat-whisper'
-     axios.defaults.headers.common = { 'Authorization': 'Bearer ' +context.rootState.posts.apiToken }
-     axios.post(
-       `${context.state.frontUrl}${url}`, {user : context.state.author}
-     ).then( (response) => {
-       
-       context.commit("WHISPER",true)
-     }).catch( e => {
-     })
-     
-    }, 300);
-  },
+   setChatApiUrl(context,pl){
+    context.commit("SET_FRONT_URL",pl)
+   }
   },
   getters: {
    

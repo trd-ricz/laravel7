@@ -29,16 +29,6 @@ checkRequireParams () {
 }
 
 ##
-# Up docker
-#
-upDocker () {
-  cd ${abspath}
-  cd ${LARADOCK_DIR}
-  docker network create shared
-  docker-compose up -d
-}
-
-##
 # composer install
 #
 installComposer () {
@@ -64,16 +54,6 @@ installNpm () {
 
 
 ##
-# replace docker env
-#
-replaceDockerEnv () {
-  cd ${abspath}
-  cd ${LARADOCK_DIR}
-  cp .env .env.tmp
-  cp .env.${ENV} .env
-}
-
-##
 # replace laravel env
 #
 replaceLaravelEnv () {
@@ -81,6 +61,16 @@ replaceLaravelEnv () {
   cd ${LARAVEL_DIR}
   cp .env .env.tmp
   cp .env.${ENV} .env
+}
+
+##
+# replace laravel echo json env
+#
+replaceLaravelEnv () {
+  cd ${abspath}
+  cd ${LARAVEL_DIR}
+  cp laravel-echo-server.json laravel-echo-server.json.tmp
+  cp laravel-echo-server.json.${ENV} laravel-echo-server.json
 }
 
 ##
@@ -92,14 +82,6 @@ compressDeployFiles() {
   zip -r -q ./deploy.zip -r * .[^.]*
 }
 
-##
-# roll back docker settings
-#
-rollBackDockerSettings() {
-  cd ${abspath}
-  cd ${LARADOCK_DIR}
-  mv -f .env.tmp .env
-}
 
 ##
 # roll back laravel settings
@@ -108,6 +90,7 @@ rollBackLaravelSettings() {
   cd ${abspath}
   cd ${LARAVEL_DIR}
   mv -f .env.tmp .env
+  mv -f laravel-echo-server.json.tmp laravel-echo-server.json
 }
 
 ###---------------------------------------###
@@ -119,14 +102,8 @@ abspath=$(cd $(dirname $0); pwd)
 # Param $1 from console
 checkRequireParams $1
 
-# Replace docker env
-#replaceDockerEnv
-
 ## Replace laravel env
 replaceLaravelEnv
-
-# Up docker
-#upDocker
 
 # Install composer
 installComposer

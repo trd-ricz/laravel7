@@ -15,8 +15,7 @@
      </li>
       <hr>
     </ul>
-   <textarea v-model="$store.state.chat.message" @keydown="isTyping(true)"></textarea>
-   <!-- <p v-show="type">{{whisperBy}} Typing...</p> -->
+   <textarea v-model="$store.state.chat.message"></textarea>
    <button @click="sendMessage"> Send </button>
   </div>
 </template>
@@ -43,18 +42,18 @@ export default {
    },
   },
   mounted() {
-   
+   this.setChatApiUrl(process.env.MIX_FRONT_URL)
    window.Echo.channel("laravel_database_chat_message")
    .listen("ChatEvent", e => {this.receiveMessage(e.chat)})
      
   },
   methods: {
    ...mapActions('chat/',[
+    'setChatApiUrl',
     'sendMessage',
     'saveAuthor',
     'receiveMessage',
     'showMore',
-    'isTyping'
    ]),
   }
 };

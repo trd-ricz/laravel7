@@ -2058,7 +2058,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
-//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   components: {
@@ -2078,11 +2077,12 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
   mounted: function mounted() {
     var _this = this;
 
+    this.setChatApiUrl("http://laravel7.localhost/");
     window.Echo.channel("laravel_database_chat_message").listen("ChatEvent", function (e) {
       _this.receiveMessage(e.chat);
     });
   },
-  methods: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapActions"])('chat/', ['sendMessage', 'saveAuthor', 'receiveMessage', 'showMore', 'isTyping']))
+  methods: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapActions"])('chat/', ['setChatApiUrl', 'sendMessage', 'saveAuthor', 'receiveMessage', 'showMore']))
 });
 
 /***/ }),
@@ -49984,9 +49984,6 @@ var render = function() {
       ],
       domProps: { value: _vm.$store.state.chat.message },
       on: {
-        keydown: function($event) {
-          return _vm.isTyping(true)
-        },
         input: function($event) {
           if ($event.target.composing) {
             return
@@ -63571,7 +63568,7 @@ window.io = __webpack_require__(/*! socket.io-client */ "./node_modules/socket.i
 if (typeof io !== 'undefined') {
   window.Echo = new laravel_echo__WEBPACK_IMPORTED_MODULE_0__["default"]({
     broadcaster: 'socket.io',
-    host: window.location.hostname + ':40911'
+    host: window.location.hostname + ':' + "40911"
   });
 } //
 //window.Echo.channel("laravel_database_chat").listen("ChatEvent", e => {
@@ -63965,20 +63962,13 @@ var Chat = {
     message: "",
     author: "",
     chatData: [],
-    frontUrl: 'http://laravel7.localhost/',
+    frontUrl: "",
     skip: 1,
     whisper: false
   },
   mutations: {
     SUBMIT_MESSAGE: function SUBMIT_MESSAGE(state, pl) {
-      console.log('muta', pl);
-      state.chatData = pl; //    state.chatData.push(
-      //      {
-      //       message : pl.message,
-      //       author : (pl.author) ? pl.author : "No name"
-      //      }
-      //    )
-
+      state.chatData = pl;
       state.message = "";
     },
     SAVE_AUTHOR: function SAVE_AUTHOR(state, pl) {
@@ -63997,6 +63987,9 @@ var Chat = {
     },
     WHISPER: function WHISPER(state, pl) {
       state.whisper = pl;
+    },
+    SET_FRONT_URL: function SET_FRONT_URL(state, pl) {
+      state.frontUrl = pl;
     }
   },
   actions: {
@@ -64032,25 +64025,8 @@ var Chat = {
         context.commit("DECREMENT_SKIP");
       });
     },
-    isTyping: function isTyping(context, pl) {
-      console.log(pl);
-
-      if (!pl) {
-        context.commit("WHISPER", false);
-        return;
-      }
-
-      setTimeout(function () {
-        var url = 'api/chat-whisper';
-        axios.defaults.headers.common = {
-          'Authorization': 'Bearer ' + context.rootState.posts.apiToken
-        };
-        axios.post("".concat(context.state.frontUrl).concat(url), {
-          user: context.state.author
-        }).then(function (response) {
-          context.commit("WHISPER", true);
-        })["catch"](function (e) {});
-      }, 300);
+    setChatApiUrl: function setChatApiUrl(context, pl) {
+      context.commit("SET_FRONT_URL", pl);
     }
   },
   getters: {}
