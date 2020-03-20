@@ -6,7 +6,7 @@ const Chat = {
    message : "",
    author : "",
    chatData : [],
-   frontUrl : 'http://laravel7.localhost/',
+   frontUrl : 'http://139.180.135.129/',
    skip : 1,
    whisper : false
     
