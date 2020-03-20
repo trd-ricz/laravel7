@@ -18,7 +18,7 @@ echo $SSH_KEY
 ####################################
 
 # dir
-DEPLOY_DIR=/root/laravel7
+DEPLOY_DIR=/home/projects/laravel7
 
 # SSH_USER
 SSH_USER=projects@139.180.135.129
