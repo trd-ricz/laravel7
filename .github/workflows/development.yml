@@ -14,7 +14,14 @@ jobs:
       run: echo "$SSH_DEVELOPMENT_KEY" > key && chmod 600 key
       env:
         SSH_DEVELOPMENT_KEY: ${{ secrets.SSH_DEVELOPMENT_KEY }}
+    - name: Making cache for prepare
+      id: prepare-deploy-cache
+      uses: actions/cache@v1
+      with:
+        path: prepare-deploy
+        key: ${{ runner.os }}-prepare-deploy-test-key
     - name: Making tar for Deploy
+      if: steps.prepare-deploy-cache.outputs.cache-hit != 'true'
       run: bash ./prepare_deploy.sh development
-    - name: Deploying
-      run: bash ./exec_deploy_development.sh key
+    #- name: Deploying
+    #  run: bash ./exec_deploy_development.sh key
